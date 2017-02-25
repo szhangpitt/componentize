@@ -2,8 +2,12 @@ const viewer = require('./components/viewer');
 const nav = require('./components/nav');
 
 const Rx = require('rxjs/Rx');
+const xdispatch = require('./lib/x-dispatch');
+
+
 
 ((function ComponentFirstApplication () {
+
     const app$ = new Rx.BehaviorSubject({
         document: {
             pages: [
@@ -15,53 +19,43 @@ const Rx = require('rxjs/Rx');
         currentPageNum: 0,
     });
 
-    const viewer$ = app$.map(mapViewerState);
-    const nav$ = app$.map(mapNavState);
+    const reduceCurrentPageNum = (currentPageNum, action) => {
+        return action.type === 'viewer_change_page'
+            || action.type === 'nav_change_page' ?
+            action.data
+            : currentPageNum;
+    };
 
-    const viewer1 = viewer(viewer$, document.querySelector('#viewer1'), dispatch);
-    const nav1 = nav(nav$, document.querySelector('#nav1'), dispatch);
-    // var nav = new Navigator(app$, $('#nav1'));
-    // var nav = new Navigator(app$, $('#nav2'));
+    const reducePages = (pages, action) => {
+        return action.type === 'app_change_pages' ?
+            action.data
+            : pages;
+    };
 
-    function mapViewerState (state) {
-        return {
-            pages: state.document.pages,
-            currentPageNum: state.currentPageNum,
-        };
-    }
-
-    function mapNavState (state) {
-        return {
-            pages: state.document.pages,
-            currentPageNum: state.currentPageNum,
-        };
-    }
-
-    function dispatch (action) {
-        const oldState = app$.getValue();
-        const newState = reduce(oldState, action);
-        app$.next(newState);
-    }
-
-    function reduce (state, action) {
+    const reduce = (state, action) => {
         return {
             document: {
                 pages: reducePages(state.document.pages, action),
             },
             currentPageNum: reduceCurrentPageNum(state.currentPageNum, action),
         };
-    }
+    };
 
-    function reduceCurrentPageNum (currentPageNum, action) {
-        return action.type === 'viewer_change_page' || action.type === 'nav_change_page' ?
-            action.data
-            : currentPageNum;
-    }
+    const dispatch = xdispatch(app$, reduce);
 
-    function reducePages (pages, action) {
-        return action.type === 'app_change_pages' ?
-            action.data
-            : pages;
-    }
+    const viewer$ = app$.map(state => ({
+        pages: state.document.pages,
+        currentPageNum: state.currentPageNum,
+    }));
+
+    const nav$ = app$.map(state => ({
+        pages: state.document.pages,
+        currentPageNum: state.currentPageNum,
+    }));
+
+    const viewer1 = viewer(viewer$, document.querySelector('#viewer1'), dispatch);
+    const viewer2 = viewer(viewer$, document.querySelector('#viewer2'), dispatch);
+    const nav1 = nav(nav$, document.querySelector('#nav1'), dispatch);
+    const nav2 = nav(nav$, document.querySelector('#nav2'), dispatch);
 
 })());

@@ -23,7 +23,7 @@ section {
 }
 
 section.active{
-    border-color: red;
+    border-width: 6px;
 }
 
 nav {
