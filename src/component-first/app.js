@@ -1,4 +1,6 @@
-const viewer = require('./viewer');
+const viewer = require('./components/viewer');
+const nav = require('./components/nav');
+
 const Rx = require('rxjs/Rx');
 
 ((function ComponentFirstApplication () {
@@ -14,12 +16,21 @@ const Rx = require('rxjs/Rx');
     });
 
     const viewer$ = app$.map(mapViewerState);
+    const nav$ = app$.map(mapNavState);
 
     const viewer1 = viewer(viewer$, document.querySelector('#viewer1'), dispatch);
+    const nav1 = nav(nav$, document.querySelector('#nav1'), dispatch);
     // var nav = new Navigator(app$, $('#nav1'));
     // var nav = new Navigator(app$, $('#nav2'));
 
     function mapViewerState (state) {
+        return {
+            pages: state.document.pages,
+            currentPageNum: state.currentPageNum,
+        };
+    }
+
+    function mapNavState (state) {
         return {
             pages: state.document.pages,
             currentPageNum: state.currentPageNum,
@@ -42,7 +53,7 @@ const Rx = require('rxjs/Rx');
     }
 
     function reduceCurrentPageNum (currentPageNum, action) {
-        return action.type === 'viewer_change_page' ?
+        return action.type === 'viewer_change_page' || action.type === 'nav_change_page' ?
             action.data
             : currentPageNum;
     }

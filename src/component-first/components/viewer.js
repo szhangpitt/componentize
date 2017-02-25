@@ -1,6 +1,5 @@
-const snabbdom = require('snabbdom');
-const patch = require('./patch');
 const h = require('snabbdom/h').default;
+const run = require('../lib/run-component');
 
 function vnode ({pages, currentPageNum}, dispatch) {
     return h('article',
@@ -19,18 +18,4 @@ function vnode ({pages, currentPageNum}, dispatch) {
     );
 }
 
-function init () {
-    return {
-        pages: [],
-        currentPageNum: -1,
-    };
-}
-
-module.exports =
-function patchVnode (state$, target, dispatch) {
-    const vnodeStream = state$
-    .map((state) => vnode(state, dispatch))
-    .startWith(target)
-    .pairwise()
-    .subscribe(([oldVnode, newVnode]) => patch(oldVnode, newVnode));
-};
+module.exports = run(vnode);
