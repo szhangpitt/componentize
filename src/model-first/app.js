@@ -15,10 +15,9 @@ const DataModel = require('./data-model');
         currentPageNum: 0,
     });
 
-    var viewer = new Viewer(dataModel, $('#viewer'));
+    var viewer1 = new Viewer(dataModel, $('#viewer1'));
+    var viewer2 = new Viewer(dataModel, $('#viewer2'));
     var nav = new Navigator(dataModel, $('#nav1'));
     var nav = new Navigator(dataModel, $('#nav2'));
 
-    console.log(viewer);
-    console.log(nav);
 })());
