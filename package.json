@@ -1,0 +1,26 @@
+{
+  "name": "componentize",
+  "version": "1.0.0",
+  "description": "testing idea of componentize",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "buildm": "mkdir -p dist && cp -r src/* dist && webpack src/model-first/app.js dist/model-first/bundle.js",
+    "livem": "live-server dist/model-first",
+    "m": "npm run buildm && npm run livem"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bbgithub.dev.bloomberg.com:szhang351/componentize.git"
+  },
+  "keywords": [],
+  "author": "Shaopeng Zhang <szhang351@bloomberg.net> (https://bbgithub.dev.bloomberg.com/szhang351)",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "~1.2.0",
+    "webpack": "~2.2.1"
+  },
+  "dependencies": {
+    "jquery": "~3.1.1"
+  }
+}
