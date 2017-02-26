@@ -1,10 +1,7 @@
 const viewer = require('./components/viewer');
 const nav = require('./components/nav');
-
-const Rx = require('rxjs/Rx');
 const xdispatch = require('./lib/x-dispatch');
-
-
+const assign = Object.assign;
 
 ((function ComponentFirstApplication () {
 
@@ -50,6 +47,14 @@ const xdispatch = require('./lib/x-dispatch');
         };
     };
 
+    const reduceAllDocsCurrentPageNum = (allDocStates, action) => {
+        return allDocStates.map(singleDocState => {
+            return action.type === 'nav_change_page'
+                ? assign({}, singleDocState, { currentPageNum: action.data })
+                : singleDocState;
+        });
+    };
+
     const viewerStateMap = (singleDocState) => {
         return {
             pages: singleDocState.document.pages,
@@ -64,20 +69,31 @@ const xdispatch = require('./lib/x-dispatch');
         };
     };
 
+    const pickFirst = (allDocStates) => allDocStates[0];
+    const pickSecond = (allDocStates) => allDocStates[1];
+
     const dispatch1 = xdispatch(appState[0], reduceSingleDoc);
     const dispatch2 = xdispatch(appState[1], reduceSingleDoc);
+    const dispatch0 = xdispatch(appState, reduceAllDocsCurrentPageNum);
+
     const doc1State$ = dispatch1.targetState$;
     const doc2State$ = dispatch2.targetState$;
+    const allDocs$ = dispatch0.targetState$;
 
-    const viewer1$ = doc1State$.map(viewerStateMap);
-    const viewer2$ = doc2State$.map(viewerStateMap);
+    const viewer1$ = doc1State$.merge(allDocs$.map(pickFirst)).map(viewerStateMap);
+    const viewer2$ = doc2State$.merge(allDocs$.map(pickSecond)).map(viewerStateMap);
 
     const nav1$ = doc1State$.map(navStateMap);
     const nav2$ = doc2State$.map(navStateMap);
+
 
     const viewer1 = viewer(viewer1$, document.querySelector('#viewer1'), dispatch1);
     const viewer2 = viewer(viewer2$, document.querySelector('#viewer2'), dispatch2);
     const nav1 = nav(nav1$, document.querySelector('#nav1'), dispatch1);
     const nav2 = nav(nav2$, document.querySelector('#nav2'), dispatch2);
+
+    // since nav0 changes all currentPageNum to the same value,
+    // just picking the 1st item will do
+    const nav0 = nav(nav1$, document.querySelector('#nav0'), dispatch0);
 
 })());
