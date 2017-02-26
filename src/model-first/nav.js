@@ -1,18 +1,17 @@
 var $ = require('jquery');
 
-function Navigator (appDataModel, target) {
+function Navigator (appDataModel, docIndex, target) {
     var self = this;
-    self.currentPageNum = appDataModel.currentPageNum;
+    self.currentPageNum = appDataModel.getCurrentPageNum(docIndex);
     self.dom = getDom(self.currentPageNum);
 
     self.dom.on('click', 'button', function (e) {
         var pageNumAttr = $(e.target).attr('data-page-num');
-
-        appDataModel.setCurrentPageNum(+pageNumAttr);
+        appDataModel.setCurrentPageNum(+pageNumAttr, docIndex);
     });
 
-    appDataModel.onCurrentPageNum(function (pageNum) {
-        self.dom.find('p > span').html(pageNum);
+    appDataModel.onCurrentPageNum(function (pageNum, di) {
+        di === docIndex && self.dom.find('p > span').html(pageNum);
     });
 
     render(self.dom);
