@@ -13,6 +13,11 @@ function Navigator (appDataModel, docIndex, target) {
     appDataModel.onCurrentPageNum(function (pageNum, di) {
         (di === docIndex || Array.isArray(docIndex) && docIndex.indexOf(di) !== -1)
             && self.dom.find('p > span').html(pageNum);
+
+        (Array.isArray(docIndex))
+            && self.dom
+                .find('p > span')
+                .html(`[nav1: ${appDataModel.getCurrentPageNum(0)}, nav2: ${appDataModel.getCurrentPageNum(1)}]`)
     });
 
     render(self.dom);
