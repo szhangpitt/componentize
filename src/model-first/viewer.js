@@ -15,8 +15,10 @@ function Viewer (appDataModel, docIndex, target) {
     });
 
     appDataModel.onCurrentPageNum(function (pageNum, di) {
-        docIndex === di && self.dom.find(`section`).removeClass('active');
-        docIndex === di && self.dom.find(`section[data-index="${pageNum}"]`).addClass('active');
+        (docIndex === di || Array.isArray(docIndex) && docIndex.indexOf(di))
+            && self.dom.find(`section`).removeClass('active');
+        (docIndex === di || Array.isArray(docIndex) && docIndex.indexOf(di))
+            && self.dom.find(`section[data-index="${pageNum}"]`).addClass('active');
     });
 
     function getDom (pages, pageNum) {
