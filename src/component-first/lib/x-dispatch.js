@@ -1,8 +1,17 @@
+const Rx = require('rxjs/Rx');
+
 module.exports =
-function makeDispatch (state$, reduce) {
-    return function dispatch (action) {
-        const oldState = state$.getValue();
-        const newState = reduce(oldState, action);
-        state$.next(newState);
+function makeDispatch (targetState, reducer) {
+    const targetState$ = new Rx.BehaviorSubject(targetState);
+
+    const dispatch = function dispatch (action) {
+        const oldState = targetState$.getValue();
+        const newState = reducer(oldState, action);
+        targetState$.next(newState);
     };
+
+    dispatch.$ = targetState$;
+    dispatch.targetState$ = targetState$;
+
+    return dispatch;
 };
