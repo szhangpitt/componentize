@@ -13,7 +13,7 @@ const assign = Object.assign;
                 'The last page...',
             ],
         },
-        currentPageNum: 0,
+        currentPageNum: 1,
     }, {
         document: {
             pages: [
@@ -22,7 +22,7 @@ const assign = Object.assign;
                 'The last page...',
             ],
         },
-        currentPageNum: 0,
+        currentPageNum: 2,
     }];
 
     const reduceCurrentPageNum = (currentPageNum, action) => {
@@ -84,7 +84,7 @@ const assign = Object.assign;
     const viewer2$ = doc2State$.merge(allDocs$.map(pickSecond)).map(viewerStateMap);
 
     const nav1$ = doc1State$.merge(allDocs$.map(pickFirst)).map(navStateMap);
-    const nav2$ = doc2State$.merge(allDocs$.map(pickFirst)).map(navStateMap);
+    const nav2$ = doc2State$.merge(allDocs$.map(pickSecond)).map(navStateMap);
 
     // let nav0 state stream follow the latest of nav1 and nav2,
     const nav0$ = nav1$.combineLatest(nav2$, function (nav1State, nav2State) {
