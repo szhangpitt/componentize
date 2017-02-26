@@ -17,7 +17,7 @@ const DataModel = require('./data-model');
 
     var viewer1 = new Viewer(dataModel, $('#viewer1'));
     var viewer2 = new Viewer(dataModel, $('#viewer2'));
-    var nav = new Navigator(dataModel, $('#nav1'));
-    var nav = new Navigator(dataModel, $('#nav2'));
+    var nav1 = new Navigator(dataModel, $('#nav1'));
+    var nav2 = new Navigator(dataModel, $('#nav2'));
 
 })());
