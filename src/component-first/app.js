@@ -83,17 +83,23 @@ const assign = Object.assign;
     const viewer1$ = doc1State$.merge(allDocs$.map(pickFirst)).map(viewerStateMap);
     const viewer2$ = doc2State$.merge(allDocs$.map(pickSecond)).map(viewerStateMap);
 
-    const nav1$ = doc1State$.map(navStateMap);
-    const nav2$ = doc2State$.map(navStateMap);
+    const nav1$ = doc1State$.merge(allDocs$.map(pickFirst)).map(navStateMap);
+    const nav2$ = doc2State$.merge(allDocs$.map(pickFirst)).map(navStateMap);
 
+    // let nav0 state stream follow the latest of nav1 and nav2,
+    const nav0$ = nav1$.combineLatest(nav2$, function (nav1State, nav2State) {
+        return {
+            // display a "summary" of current page num
+            currentPageNum: `[nav1: ${nav1State.currentPageNum}, nav2: ${nav2State.currentPageNum}]`,
+            pages: nav1State.pages,
+        };
+    });
 
     const viewer1 = viewer(viewer1$, document.querySelector('#viewer1'), dispatch1);
     const viewer2 = viewer(viewer2$, document.querySelector('#viewer2'), dispatch2);
     const nav1 = nav(nav1$, document.querySelector('#nav1'), dispatch1);
     const nav2 = nav(nav2$, document.querySelector('#nav2'), dispatch2);
 
-    // since nav0 changes all currentPageNum to the same value,
-    // just picking the 1st item will do
-    const nav0 = nav(nav1$, document.querySelector('#nav0'), dispatch0);
+    const nav0 = nav(nav0$, document.querySelector('#nav0'), dispatch0);
 
 })());
