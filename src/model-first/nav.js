@@ -3,7 +3,10 @@ var $ = require('jquery');
 function Navigator (appDataModel, docIndex, target) {
     var self = this;
     self.currentPageNum = appDataModel.getCurrentPageNum(docIndex);
-    self.dom = getDom(self.currentPageNum);
+    self.dom = getDom(
+        Array.isArray(docIndex)
+        ? `[nav1: ${appDataModel.getCurrentPageNum(0)}, nav2: ${appDataModel.getCurrentPageNum(1)}]`
+        : self.currentPageNum);
 
     self.dom.on('click', 'button', function (e) {
         var pageNumAttr = $(e.target).attr('data-page-num');
