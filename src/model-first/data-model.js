@@ -7,18 +7,24 @@ function DataModel (input) {
 
 DataModel.prototype.getDocument =
 function (docIndex) {
-    return this.state[docIndex];
+    var i = Array.isArray(docIndex) ? 0 : docIndex;
+    return this.state[i];
 }
 
 DataModel.prototype.getCurrentPageNum =
 function (docIndex) {
-    return this.state[docIndex].currentPageNum;
+    var i = Array.isArray(docIndex) ? 0 : docIndex;
+    return this.state[i].currentPageNum;
 };
 
 DataModel.prototype.setCurrentPageNum =
 function (pageNum, docIndex) {
-    this.state[docIndex].currentPageNum = pageNum;
-    this.emitter.emit('currentPageNum', pageNum, docIndex);
+    var self = this;
+    var dis = [].concat(docIndex);
+    dis.forEach(function (di) {
+        self.state[di].currentPageNum = pageNum;
+        self.emitter.emit('currentPageNum', pageNum, di);
+    });
 };
 
 DataModel.prototype.onCurrentPageNum =

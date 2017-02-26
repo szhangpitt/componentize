@@ -11,7 +11,8 @@ function Navigator (appDataModel, docIndex, target) {
     });
 
     appDataModel.onCurrentPageNum(function (pageNum, di) {
-        di === docIndex && self.dom.find('p > span').html(pageNum);
+        (di === docIndex || Array.isArray(docIndex) && docIndex.indexOf(di) !== -1)
+            && self.dom.find('p > span').html(pageNum);
     });
 
     render(self.dom);

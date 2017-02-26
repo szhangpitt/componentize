@@ -30,4 +30,6 @@ const DataModel = require('./data-model');
     var nav1 = new Navigator(dataModel, 0, $('#nav1'));
     var nav2 = new Navigator(dataModel, 1, $('#nav2'));
 
+    var nav0 = new Navigator(dataModel, [0, 1], $('#nav0'));
+
 })());
