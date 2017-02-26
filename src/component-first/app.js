@@ -8,7 +8,7 @@ const xdispatch = require('./lib/x-dispatch');
 
 ((function ComponentFirstApplication () {
 
-    const app$ = new Rx.BehaviorSubject({
+    const appState = [{
         document: {
             pages: [
                 'This is some fake content of a pdf document...',
@@ -17,7 +17,16 @@ const xdispatch = require('./lib/x-dispatch');
             ],
         },
         currentPageNum: 0,
-    });
+    }, {
+        document: {
+            pages: [
+                'Another doc!',
+                'And some other fake content...',
+                'The last page...',
+            ],
+        },
+        currentPageNum: 0,
+    }];
 
     const reduceCurrentPageNum = (currentPageNum, action) => {
         return action.type === 'viewer_change_page'
@@ -32,7 +41,7 @@ const xdispatch = require('./lib/x-dispatch');
             : pages;
     };
 
-    const reduce = (state, action) => {
+    const reduceSingleDoc = (state, action) => {
         return {
             document: {
                 pages: reducePages(state.document.pages, action),
@@ -41,21 +50,34 @@ const xdispatch = require('./lib/x-dispatch');
         };
     };
 
-    const dispatch = xdispatch(app$, reduce);
+    const viewerStateMap = (singleDocState) => {
+        return {
+            pages: singleDocState.document.pages,
+            currentPageNum: singleDocState.currentPageNum,
+        };
+    };
 
-    const viewer$ = app$.map(state => ({
-        pages: state.document.pages,
-        currentPageNum: state.currentPageNum,
-    }));
+    const navStateMap = (singleDocState) => {
+        return {
+            pages: singleDocState.document.pages,
+            currentPageNum: singleDocState.currentPageNum,
+        };
+    };
 
-    const nav$ = app$.map(state => ({
-        pages: state.document.pages,
-        currentPageNum: state.currentPageNum,
-    }));
+    const control1 = xdispatch(appState[0], reduceSingleDoc);
+    const control2 = xdispatch(appState[1], reduceSingleDoc);
+    const doc1State$ = control1.targetState$;
+    const doc2State$ = control2.targetState$;
 
-    const viewer1 = viewer(viewer$, document.querySelector('#viewer1'), dispatch);
-    const viewer2 = viewer(viewer$, document.querySelector('#viewer2'), dispatch);
-    const nav1 = nav(nav$, document.querySelector('#nav1'), dispatch);
-    const nav2 = nav(nav$, document.querySelector('#nav2'), dispatch);
+    const viewer1$ = doc1State$.map(viewerStateMap);
+    const viewer2$ = doc2State$.map(viewerStateMap);
+
+    const nav1$ = doc1State$.map(navStateMap);
+    const nav2$ = doc2State$.map(navStateMap);
+
+    const viewer1 = viewer(viewer1$, document.querySelector('#viewer1'), control1);
+    const viewer2 = viewer(viewer2$, document.querySelector('#viewer2'), control2);
+    const nav1 = nav(nav1$, document.querySelector('#nav1'), control1);
+    const nav2 = nav(nav2$, document.querySelector('#nav2'), control2);
 
 })());
