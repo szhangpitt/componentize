@@ -1,24 +1,31 @@
 const EventEmitter = require('events');
 
 function DataModel (input) {
-
-    this.document = input.document;
-    this.currentPageNum = input.currentPageNum;
-
+    this.state = input;
     this.emitter = new EventEmitter();
 }
 
+DataModel.prototype.getDocument =
+function (docIndex) {
+    return this.state[docIndex];
+}
+
+DataModel.prototype.getCurrentPageNum =
+function (docIndex) {
+    return this.state[docIndex].currentPageNum;
+};
+
 DataModel.prototype.setCurrentPageNum =
-function (pageNum) {
-    this.currentPageNum = pageNum;
-    this.emitter.emit('currentPageNum', pageNum);
+function (pageNum, docIndex) {
+    this.state[docIndex].currentPageNum = pageNum;
+    this.emitter.emit('currentPageNum', pageNum, docIndex);
 };
 
 DataModel.prototype.onCurrentPageNum =
 function (cb) {
     var self = this;
-    this.emitter.on('currentPageNum', function () {
-        cb(self.currentPageNum);
+    self.emitter.on('currentPageNum', function (pageNum, docIndex) {
+        cb(pageNum, docIndex);
     });
 };
 
