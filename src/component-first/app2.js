@@ -16,12 +16,22 @@ const viewerV = require('./components/viewer').vnode;
     let currentIndex = app2State.startIndex;
     let oldNode = document.querySelector('#target');
 
-    setInterval(() => {
-        currentIndex = (currentIndex + 1) % totalCount;
-        const cardVnode = viewerV({
+    const intervalId = setInterval(() => {
+
+        let cardVnode = viewerV({
             pages: app2State.cards,
             currentPageNum: currentIndex,
+        }, function dispatch (action) {
+            if (action.type === 'viewer_change_page') {
+                currentIndex = action.data;
+                cardVnode = viewerV({
+                    pages: app2State.cards,
+                    currentPageNum: currentIndex,
+                }, dispatch);
+            }
         });
+
+        currentIndex = (currentIndex + 1) % totalCount;
         patch(oldNode, cardVnode);
         oldNode = cardVnode;
     }, 1000);
