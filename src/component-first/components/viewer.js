@@ -19,3 +19,4 @@ function vnode ({pages, currentPageNum}, dispatch) {
 }
 
 module.exports = run(vnode);
+module.exports.vnode = vnode;
