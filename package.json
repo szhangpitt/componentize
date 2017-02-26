@@ -9,9 +9,11 @@
     "buildm": "npm run static && webpack --devtool source-map src/model-first/app.js dist/model-first/bundle.js",
     "livem": "live-server dist/model-first",
     "m": "watch 'npm run static' src & npm run buildm -- -w & npm run livem",
-    "buildc": "npm run static && webpack --devtool source-map src/component-first/app.js dist/component-first/bundle.js",
+    "buildc1": "npm run static && webpack --devtool source-map src/component-first/app1.js dist/component-first/bundle.js",
+    "buildc2": "npm run static && webpack --devtool source-map src/component-first/app2.js dist/component-first/bundle2.js",
     "livec": "live-server dist/component-first",
-    "c": "watch 'npm run static' src & npm run buildc -- -w & npm run livec"
+    "c1": "watch 'npm run static' src & npm run buildc1 -- -w & npm run livec -- --entry-file=index1.html",
+    "c2": "watch 'npm run static' src & npm run buildc2 -- -w & npm run livec -- --entry-file=index2.html"
   },
   "repository": {
     "type": "git",
