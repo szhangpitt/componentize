@@ -1,5 +1,4 @@
 const h = require('snabbdom/h').default;
-const run = require('../lib/run-component');
 
 function vnode ({pages, currentPageNum}, dispatch) {
     return h('article',
@@ -18,5 +17,4 @@ function vnode ({pages, currentPageNum}, dispatch) {
     );
 }
 
-module.exports = run(vnode);
-module.exports.vnode = vnode;
+module.exports = vnode;

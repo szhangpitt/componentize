@@ -1,6 +1,7 @@
 const viewer = require('./components/viewer');
 const nav = require('./components/nav');
 const xdispatch = require('./lib/x-dispatch');
+const run = require('./lib/run-component');
 const assign = Object.assign;
 
 ((function ComponentFirstApplication () {
@@ -95,11 +96,11 @@ const assign = Object.assign;
         };
     });
 
-    const viewer1 = viewer(viewer1$, document.querySelector('#viewer1'), dispatch1);
-    const viewer2 = viewer(viewer2$, document.querySelector('#viewer2'), dispatch2);
-    const nav1 = nav(nav1$, document.querySelector('#nav1'), dispatch1);
-    const nav2 = nav(nav2$, document.querySelector('#nav2'), dispatch2);
+    const viewer1 = run(viewer, document.querySelector('#viewer1'))(viewer1$, dispatch1);
+    const viewer2 = run(viewer, document.querySelector('#viewer2'))(viewer2$, dispatch2);
+    const nav1 = run(nav, document.querySelector('#nav1'))(nav1$, dispatch1);
+    const nav2 = run(nav, document.querySelector('#nav2'))(nav2$, dispatch2);
 
-    const nav0 = nav(nav0$, document.querySelector('#nav0'), dispatch0);
+    const nav0 = run(nav, document.querySelector('#nav0'))(nav0$, dispatch0);
 
 })());

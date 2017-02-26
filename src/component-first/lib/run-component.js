@@ -1,8 +1,8 @@
 const patch = require('./patch');
 
 module.exports =
-function makePatchVnode (vnodeFn) {
-    return function patchVnode (state$, target, dispatch) {
+function makePatchVnode (vnodeFn, target) {
+    return function patchVnode (state$, dispatch) {
         const vnodeSub = state$
         .map((state) => vnodeFn(state, dispatch))
         .startWith(target)
