@@ -64,10 +64,10 @@ const xdispatch = require('./lib/x-dispatch');
         };
     };
 
-    const control1 = xdispatch(appState[0], reduceSingleDoc);
-    const control2 = xdispatch(appState[1], reduceSingleDoc);
-    const doc1State$ = control1.targetState$;
-    const doc2State$ = control2.targetState$;
+    const dispatch1 = xdispatch(appState[0], reduceSingleDoc);
+    const dispatch2 = xdispatch(appState[1], reduceSingleDoc);
+    const doc1State$ = dispatch1.targetState$;
+    const doc2State$ = dispatch2.targetState$;
 
     const viewer1$ = doc1State$.map(viewerStateMap);
     const viewer2$ = doc2State$.map(viewerStateMap);
@@ -75,9 +75,9 @@ const xdispatch = require('./lib/x-dispatch');
     const nav1$ = doc1State$.map(navStateMap);
     const nav2$ = doc2State$.map(navStateMap);
 
-    const viewer1 = viewer(viewer1$, document.querySelector('#viewer1'), control1);
-    const viewer2 = viewer(viewer2$, document.querySelector('#viewer2'), control2);
-    const nav1 = nav(nav1$, document.querySelector('#nav1'), control1);
-    const nav2 = nav(nav2$, document.querySelector('#nav2'), control2);
+    const viewer1 = viewer(viewer1$, document.querySelector('#viewer1'), dispatch1);
+    const viewer2 = viewer(viewer2$, document.querySelector('#viewer2'), dispatch2);
+    const nav1 = nav(nav1$, document.querySelector('#nav1'), dispatch1);
+    const nav2 = nav(nav2$, document.querySelector('#nav2'), dispatch2);
 
 })());
