@@ -17,11 +17,11 @@
     "gh": "gh-pages -d dist"
   },
   "repository": {
-    "type": "git",
-    "url": "git@bbgithub.dev.bloomberg.com:szhang351/componentize.git"
+    "type": "https",
+    "url": "https://github.com/szhangpitt/componentize"
   },
   "keywords": [],
-  "author": "Shaopeng Zhang <szhang351@bloomberg.net> (https://bbgithub.dev.bloomberg.com/szhang351)",
+  "author": "Shaopeng Zhang",
   "license": "ISC",
   "devDependencies": {
     "gh-pages": "~0.12.0",
