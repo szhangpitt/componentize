@@ -4,6 +4,7 @@ module.exports =
 function makePatchVnode (vnodeFn, target) {
     return function patchVnode (state$, dispatch) {
         const vnodeSub = state$
+        .distinct()
         .map((state) => vnodeFn(state, dispatch))
         .startWith(target)
         .pairwise()
