@@ -25,3 +25,20 @@ function makeDispatch (targetState, targetReducer) {
 
     return dispatch;
 };
+
+module.exports.xxdispatch =
+(targetReducer) => (targetState) => {
+    const targetState$ = new Rx.BehaviorSubject(targetState);
+
+    const dispatch = (action) => {
+        const oldState = targetState$.getValue();
+        const newState = targetReducer(oldState, action);
+        targetState$.next(newState);
+    };
+
+    dispatch.$ = targetState$;
+    dispatch.stream = targetState$;
+
+    return dispatch;
+};
+

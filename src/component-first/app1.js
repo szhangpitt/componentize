@@ -1,6 +1,7 @@
-const viewer = require('./components/viewer');
 const nav = require('./components/nav');
+const navviewer = require('./components/nav-viewer');
 const xdispatch = require('./lib/x-dispatch');
+const xxdispatch = require('./lib/x-dispatch').xxdispatch;
 const run = require('./lib/run-component');
 const assign = Object.assign;
 const Observable = require('rxjs/Rx').Observable;
@@ -60,58 +61,46 @@ const Observable = require('rxjs/Rx').Observable;
         });
     };
 
-    const viewerStateMap = (singleDocState) => {
+    const docStateMap = (singleDocState) => {
         return {
             pages: singleDocState.document.pages,
             currentPageNum: singleDocState.currentPageNum,
         };
     };
 
-    const navStateMap = (singleDocState) => {
-        return {
-            pages: singleDocState.document.pages,
-            currentPageNum: singleDocState.currentPageNum,
-        };
-    };
+    // const doc1Channel = xdispatch(pickDoc1(appState), reduceSingleDoc);
+    // const doc2Channel = xdispatch(pickDoc2(appState), reduceSingleDoc);
+    // const doc0Channel = xdispatch(appState, reduceAllDocsCurrentPageNum);
+    const singleReducerDispatch = xxdispatch(reduceSingleDoc);
+    const allReducerDispatch = xxdispatch(reduceAllDocsCurrentPageNum);
+    const doc1Channel = singleReducerDispatch(pickDoc1(appState));
+    const doc2Channel = singleReducerDispatch(pickDoc2(appState));
+    const doc0Channel = allReducerDispatch(appState);
 
-    const updateDoc1 = xdispatch(pickDoc1(appState), reduceSingleDoc);
-    const updateDoc2 = xdispatch(pickDoc2(appState), reduceSingleDoc);
-    const updateBothDocs = xdispatch(appState, reduceAllDocsCurrentPageNum);
+    // let doc0Channel also control doc1 state
+    const doc1$ = Observable.merge(
+        doc1Channel.$,
+        doc0Channel.$.map(pickDoc1)
+    ).map(docStateMap);
 
-    const viewer1$ = Observable.merge(
-        updateDoc1.$,
-        updateBothDocs.$.map(pickDoc1)
-    ).map(viewerStateMap);
+    // let doc0Channel also control doc2 state
+    const doc2$ = Observable.merge(
+        doc2Channel.$,
+        doc0Channel.$.map(pickDoc2)
+    ).map(docStateMap);
 
-    const viewer2$ = Observable.merge(
-        updateDoc2.$,
-        updateBothDocs.$.map(pickDoc2)
-    ).map(viewerStateMap);
-
-    const nav1$ = Observable.merge(
-        updateDoc1.$,
-        updateBothDocs.$.map(pickDoc1)
-    ).map(navStateMap);
-
-    const nav2$ = Observable.merge(
-        updateDoc2.$,
-        updateBothDocs.$.map(pickDoc2)
-    ).map(navStateMap);
-
+    // let nav0 state stream follow the latest of doc1 and doc2,
     const nav0$ = Observable.combineLatest(
-        nav1$, nav2$, (nav1State, nav2State) => ({
+        doc1$, doc2$, (doc1State, doc2State) => ({
             // display a "summary" of current page num
-            currentPageNum: `[nav1: ${nav1State.currentPageNum}, nav2: ${nav2State.currentPageNum}]`,
-            pages: nav1State.pages,
+            currentPageNum: `[doc1: ${doc1State.currentPageNum}, doc2: ${doc2State.currentPageNum}]`,
+            pages: doc1State.pages,
         })
     );
 
-    // let nav0 state stream follow the latest of nav1 and nav2,
-    const viewer1 = run(viewer, document.querySelector('#viewer1'))(viewer1$, updateDoc1);
-    const viewer2 = run(viewer, document.querySelector('#viewer2'))(viewer2$, updateDoc2);
-    const nav1 = run(nav, document.querySelector('#nav1'))(nav1$, updateDoc1);
-    const nav2 = run(nav, document.querySelector('#nav2'))(nav2$, updateDoc2);
+    const navviewer1 = run(navviewer, document.querySelector('#navviewer1'))(doc1$, doc1Channel);
+    const navviewer2 = run(navviewer, document.querySelector('#navviewer2'))(doc2$, doc2Channel);
 
-    const nav0 = run(nav, document.querySelector('#nav0'))(nav0$, updateBothDocs);
+    const nav0 = run(nav, document.querySelector('#nav0'))(nav0$, doc0Channel);
 
 })());
