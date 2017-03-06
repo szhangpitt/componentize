@@ -38,12 +38,10 @@ const turnPageReducer = typeReducer({
 });
 
 const turnPageDispatch = xdispatch(appState, turnPageReducer);
+turnPageDispatch.$.subscribe(console.log.bind(console, 'state change'));
 
 const turnDoc1ToPage2 = { type: 'turn_page', data: {id: 'abc', page: 2}};
 const forceAllToPage0 = { type: 'force_page', data: {page: 0}};
-
-turnPageDispatch.$.subscribe(console.log.bind(console, 'state change'));
-
 turnPageDispatch(turnDoc1ToPage2);
 turnPageDispatch(forceAllToPage0);
 
