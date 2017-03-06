@@ -68,14 +68,9 @@ const Observable = require('rxjs/Rx').Observable;
         };
     };
 
-    // const doc1Channel = xdispatch(pickDoc1(appState), reduceSingleDoc);
-    // const doc2Channel = xdispatch(pickDoc2(appState), reduceSingleDoc);
-    // const doc0Channel = xdispatch(appState, reduceAllDocsCurrentPageNum);
-    const singleReducerDispatch = xxdispatch(reduceSingleDoc);
-    const allReducerDispatch = xxdispatch(reduceAllDocsCurrentPageNum);
-    const doc1Channel = singleReducerDispatch(pickDoc1(appState));
-    const doc2Channel = singleReducerDispatch(pickDoc2(appState));
-    const doc0Channel = allReducerDispatch(appState);
+    const doc1Channel = xdispatch(pickDoc1(appState), reduceSingleDoc);
+    const doc2Channel = xdispatch(pickDoc2(appState), reduceSingleDoc);
+    const doc0Channel = xdispatch(appState, reduceAllDocsCurrentPageNum);
 
     // let doc0Channel also control doc1 state
     const doc1$ = Observable.merge(
